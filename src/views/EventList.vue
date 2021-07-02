@@ -26,39 +26,52 @@
 <script>
 import EventCard from '@/components/EventCard.vue'
 import EventService from '@/services/EventService.js'
-import { watchEffect } from 'vue' // <--- Have to import it
-
+import NProgress from 'nprogress'
 export default {
   name: 'EventList',
-  props: ['page'], // <---- receive the param as a prop, the current page
+  props: ['page'],
   components: {
     EventCard
   },
   data() {
     return {
       events: null,
-      totalEvents: 0 // <--- Added this to store totalEvents
+      totalEvents: 0
     }
   },
-  created() {
-    watchEffect(() => {
-      this.events = null 
-      EventService.getEvents(2, this.page)
-        .then(response => {
-          this.events = response.data
-          this.totalEvents = response.headers['x-total-count']
+  beforeRouteEnter(routeTo, routeFrom, next) {
+    NProgress.start()
+    EventService.getEvents(2, parseInt(routeTo.query.page) || 1)
+      .then(response => {
+        next(comp => {
+          comp.events = response.data
+          comp.totalEvents = response.headers['x-total-count']
         })
-        .catch(error => {
-          console.log(error)
-        })
-    })
+      })
+      .catch(() => {
+        next({ name: 'NetworkError' })
+      })
+      .finally(() => {
+        NProgress.done()
+      })
+  },
+  beforeRouteUpdate(routeTo) {
+    NProgress.start()
+    EventService.getEvents(2, parseInt(routeTo.query.page) || 1)
+      .then(response => {
+        this.events = response.data
+        this.totalEvents = response.headers['x-total-count']
+      })
+      .catch(() => {
+        return { name: 'NetworkError' }
+      })
+      .finally(() => {
+        NProgress.done()
+      })
   },
   computed: {
     hasNextPage() {
-      // First, calculate total pages
-      var totalPages = Math.ceil(this.totalEvents / 2) // 2 is events per page
-
-      // Then check to see if the current page is less than the total pages.
+      var totalPages = Math.ceil(this.totalEvents / 2)
       return this.page < totalPages
     }
   }
@@ -80,11 +93,9 @@ export default {
   text-decoration: none;
   color: #2c3e50;
 }
-
 #page-prev {
   text-align: left;
 }
-
 #page-next {
   text-align: right;
 }

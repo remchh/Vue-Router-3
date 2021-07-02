@@ -3,20 +3,14 @@
     <h1>{{ event.title }}</h1>
 
     <div id="nav">
-      <router-link :to="{ name: 'EventDetails' }"
-        >Details</router-link
-      >
+      <router-link :to="{ name: 'EventDetails' }">Details</router-link>
       |
-      <router-link :to="{ name: 'EventRegister' }"
-        >Register</router-link
-      >
+      <router-link :to="{ name: 'EventRegister' }">Register</router-link>
       |
-      <router-link :to="{ name: 'EventEdit'}"
-        >Edit</router-link
-      >
+      <router-link :to="{ name: 'EventEdit' }">Edit</router-link>
     </div>
 
-    <router-view :event='event'/>
+    <router-view :event="event" />
   </div>
 </template>
 
@@ -36,7 +30,10 @@ export default {
       })
       .catch(error => {
         if (error.response && error.response.status == 404) {
-          this.$router.push({ name: '404Resource', params: { resource: 'event' } })
+          this.$router.push({
+            name: '404Resource',
+            params: { resource: 'event' }
+          })
         } else {
           this.$router.push({ name: 'NetworkError' })
         }

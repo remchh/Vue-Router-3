@@ -1,6 +1,6 @@
 <template>
-    <p>Registration form here</p>
-    <button @click="register">Register Me!</button>
+  <p>Registration form here</p>
+  <button @click="register">Register Me!</button>
 </template>
 
 <script>
@@ -12,10 +12,10 @@ export default {
       // If registration API call is successful
       this.GStore.flashMessage =
         'You are successfully registered for ' + this.event.title
-      setTimeout(() => {  // After 3 seconds remove it
+      setTimeout(() => {
+        // After 3 seconds remove it
         this.GStore.flashMessage = ''
       }, 3000)
-
 
       // Push back to the event details
       this.$router.push({
