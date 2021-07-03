@@ -11,11 +11,12 @@ const apiClient = axios.create({
 
 export default {
   getEvents(perPage, page) {
-    return apiClient.get('/events?_limit=' + perPage + '&_page=' + page)
-    .then(sleeper(1000))
+    return apiClient
+      .get('/events?_limit=' + perPage + '&_page=' + page)
+      .then(sleeper(2000))
   },
   getEvent(id) {
-    return apiClient.get('/events/' + id)
+    return apiClient.get('/events/' + id).then(sleeper(2000))
   }
 }
 
